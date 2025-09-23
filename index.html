@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Gravar Áudio: Sistema + Microfone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="header">
+        <h1>Gravar Áudio</h1>
+        <p class="subtitle">Captura o áudio compartilhado (sistema) + microfone, sem retorno.</p>
+      </header>
+
+      <section class="card">
+        <div class="controls">
+          <button id="btnStart" class="btn primary">Compartilhar + Gravar</button>
+          <button id="btnStop" class="btn" disabled>Parar &amp; Baixar</button>
+        </div>
+
+        <div class="tips">
+          <ul>
+            <li>No prompt do navegador, marque <strong>“Compartilhar áudio”</strong>.</li>
+            <li>Para melhor estabilidade, compartilhe uma <strong>aba</strong> que esteja tocando som.</li>
+          </ul>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <small>Funciona nos navegadores com <code>getDisplayMedia</code>, <code>getUserMedia</code>, WebAudio e <code>MediaRecorder</code>.</small>
+      </footer>
+    </main>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
