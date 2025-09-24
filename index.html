@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Gravar Áudio: Sistema + Microfone</title>
+  <title>EuGravoBot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -12,6 +12,13 @@
 
 <body>
   <main class="container">
+
+    <!-- AVISO DE COMPATIBILIDADE (fica escondido por padrão) -->
+    <div id="compatBanner" class="banner banner-warning" role="alert" hidden>
+      O Firefox não suporta captura do áudio do sistema.
+      Use <span class="badge">Chrome</span> ou <span class="badge">Edge</span> para gravar o som da aba/tela.
+    </div>
+
     <header class="header">
       <h1>EuGravoBot 🐧</h1>
       <p class="subtitle">Grave reuniões de forma fácil e anônima direto do navegador!</p>

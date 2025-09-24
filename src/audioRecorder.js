@@ -1,29 +1,36 @@
 import { downloadBlob } from "./download.js";
 
 /**
- * startCapture() agora retorna { stop, stopped }:
+ * startCapture() retorna { stop, stopped }:
  *  - stop(): pede para parar (equivale ao botão "Parar")
  *  - stopped: Promise que resolve quando a gravação terminou de verdade
  */
 export async function startCapture() {
+  // 🔎 Bloqueio explícito para Firefox (sem suporte a áudio do sistema via getDisplayMedia)
+  const isFirefox = navigator.userAgent.toLowerCase().includes("firefox");
+  if (isFirefox) {
+    alert("⚠️ Este navegador (Firefox) não é compatível com captura do áudio do sistema. Use Chrome ou Edge para gravar o áudio da tela/aba.");
+    throw new Error("Navegador não compatível com áudio do sistema.");
+  }
+
+  // 1) Captura da tela/aba COM áudio do sistema (Chrome/Edge)
   const displayStream = await navigator.mediaDevices.getDisplayMedia({
-    // precisa pedir vídeo, mas podemos limitar ao mínimo possível
-    video: { frameRate: 1 }, 
+    // precisa pedir vídeo para abrir o prompt; limitamos o custo
+    video: { frameRate: 1 },
     audio: true
   });
-  
-  // desabilita a trilha de vídeo imediatamente, para que não gere frames
+
+  // economiza: desabilita vídeo (não usamos imagem)
   const videoTrack = displayStream.getVideoTracks()[0];
-  if (videoTrack) {
-    videoTrack.enabled = false;  // fica "mudo" em imagem, mas mantém o áudio
-  }
-  
+  if (videoTrack) videoTrack.enabled = false;
+
   const sysTrack = displayStream.getAudioTracks()[0];
   if (!sysTrack) {
     displayStream.getTracks().forEach(t => t.stop());
     throw new Error("Sem áudio da tela/aba (marque 'Compartilhar áudio').");
   }
 
+  // 2) Microfone
   const micStream = await navigator.mediaDevices.getUserMedia({
     audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
     video: false
@@ -35,6 +42,7 @@ export async function startCapture() {
     throw new Error("Microfone não disponível.");
   }
 
+  // --- MIX e downmix para MONO ---
   const ctx = new AudioContext();
   const dest = ctx.createMediaStreamDestination();
 
@@ -44,8 +52,7 @@ export async function startCapture() {
   const sysGain = ctx.createGain(); sysGain.gain.value = 1.0;
   const micGain = ctx.createGain(); micGain.gain.value = 1.0;
 
-  // MONO
-  const merger = ctx.createChannelMerger(1);
+  const merger = ctx.createChannelMerger(1); // mono
   sysSource.connect(sysGain).connect(merger);
   micSource.connect(micGain).connect(merger);
   merger.connect(dest);
@@ -65,29 +72,30 @@ export async function startCapture() {
 
   const cleanupAndResolve = () => {
     try {
-      // gera arquivo
       const blob = new Blob(chunks, { type: mime || "audio/webm" });
       if (blob.size) downloadBlob(blob, "EuGravoBot");
     } catch {}
-    // limpeza de streams e contexto
-    [displayStream, micStream].forEach(s => s.getTracks().forEach(t => t.stop()));
-    ctx.close();
-    resolveStopped?.(); // avisa o main.js que terminou
+    try { displayStream.getTracks().forEach(t => t.stop()); } catch {}
+    try { micStream.getTracks().forEach(t => t.stop()); } catch {}
+    try { ctx.close(); } catch {}
+    resolveStopped?.();
   };
 
   rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
   rec.onstop = cleanupAndResolve;
 
-  // Se o usuário parar pelo navegador, chamamos stop() uma vez
+  // Se o usuário parar pelo navegador, finalize também
   const finalizeIfNeeded = () => {
     if (!stopping && rec.state !== "inactive") {
       stopping = true;
       rec.stop();
     }
   };
-  sysTrack.addEventListener("ended", finalizeIfNeeded);
-  sysTrack.addEventListener("inactive", finalizeIfNeeded);
-  displayStream.getVideoTracks()[0]?.addEventListener("ended", finalizeIfNeeded);
+  if (videoTrack) videoTrack.addEventListener("ended", finalizeIfNeeded);
+  if (sysTrack) {
+    sysTrack.addEventListener("ended", finalizeIfNeeded);
+    sysTrack.addEventListener("inactive", finalizeIfNeeded);
+  }
 
   rec.start(1000);
 
@@ -103,7 +111,7 @@ export async function startCapture() {
   return { stop, stopped };
 }
 
-// compat com código antigo (se ainda for usado em algum lugar)
+// compat com código antigo (se ainda for usado)
 export async function stopCapture(handle) {
   if (handle?.stop) return handle.stop();
 }

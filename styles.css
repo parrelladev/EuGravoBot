@@ -191,3 +191,45 @@ code {
   50%  { box-shadow: 0 2px 0 rgba(0,0,0,.2) inset, 0 0 14px rgba(255,76,76,.65); }
   100% { box-shadow: 0 2px 0 rgba(0,0,0,.2) inset, 0 0 6px rgba(255,76,76,.35); }
 }
+
+/* garantir que [hidden] sempre esconda */
+[hidden] { display: none !important; }
+
+/* ===== Faixa de aviso ===== */
+.banner{
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,.15);
+  font-size: 14px;
+}
+.banner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;              /* espaçamento entre os elementos */
+  flex-wrap: nowrap;     /* não deixa quebrar linha */
+  white-space: nowrap;   /* impede que o texto quebre */
+}
+
+.banner-warning{
+  background: linear-gradient(180deg, rgba(255,196,0,.12), rgba(255,196,0,.08));
+  border-color: rgba(255,196,0,.35);
+}
+
+.badge{
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.18);
+  font-weight: 700;
+  font-size: 12px;
+}
