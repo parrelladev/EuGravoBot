@@ -7,9 +7,17 @@ import { downloadBlob } from "./download.js";
  */
 export async function startCapture() {
   const displayStream = await navigator.mediaDevices.getDisplayMedia({
-    video: true,
+    // precisa pedir vídeo, mas podemos limitar ao mínimo possível
+    video: { frameRate: 1 }, 
     audio: true
   });
+  
+  // desabilita a trilha de vídeo imediatamente, para que não gere frames
+  const videoTrack = displayStream.getVideoTracks()[0];
+  if (videoTrack) {
+    videoTrack.enabled = false;  // fica "mudo" em imagem, mas mantém o áudio
+  }
+  
   const sysTrack = displayStream.getAudioTracks()[0];
   if (!sysTrack) {
     displayStream.getTracks().forEach(t => t.stop());

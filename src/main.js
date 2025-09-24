@@ -1,9 +1,14 @@
 import { startCapture } from "./audioRecorder.js";
 
-const btnStart = document.getElementById("btnStart");
-const btnStop  = document.getElementById("btnStop");
+const btnStart  = document.getElementById("btnStart");
+const btnStop   = document.getElementById("btnStop");
+const startWrap = document.querySelector(".start-wrapper");
 
-let handle = null; // referência da sessão atual
+let handle = null;
+
+function setRecordingUI(isOn){
+  startWrap?.classList.toggle("is-recording", !!isOn);
+}
 
 btnStart.addEventListener("click", async () => {
   try {
@@ -12,14 +17,12 @@ btnStart.addEventListener("click", async () => {
 
     handle = await startCapture();
 
-    // habilita o botão de parar
+    setRecordingUI(true);
     btnStop.disabled = false;
 
-    // IMPORTANTÍSSIMO: quando a gravação parar por QUALQUER motivo
-    // (botão ou usuário parou pelo navegador), atualizamos a UI aqui.
     handle.stopped.then(() => {
-      // garante que estamos mexendo na sessão atual
       if (handle) {
+        setRecordingUI(false);
         btnStart.disabled = false;
         btnStop.disabled  = true;
         handle = null;
@@ -29,6 +32,7 @@ btnStart.addEventListener("click", async () => {
   } catch (err) {
     console.error(err);
     alert("Não foi possível iniciar: " + (err.message || err));
+    setRecordingUI(false);
     btnStart.disabled = false;
     btnStop.disabled  = true;
     handle = null;
@@ -36,16 +40,12 @@ btnStart.addEventListener("click", async () => {
 });
 
 btnStop.addEventListener("click", async () => {
-  // desabilita imediatamente para evitar clique duplo
   btnStop.disabled = true;
   try {
-    if (handle?.stop) {
-      await handle.stop(); // aguarda terminar de verdade (gera o arquivo)
-    }
+    if (handle?.stop) await handle.stop();
   } finally {
-    // UI será ajustada no then() do handle.stopped,
-    // mas deixamos um fallback defensivo:
     if (handle === null) {
+      setRecordingUI(false);
       btnStart.disabled = false;
       btnStop.disabled  = true;
     }

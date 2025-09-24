@@ -1,23 +1,37 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <title>Gravar Áudio: Sistema + Microfone</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <main class="container">
-      <header class="header">
-        <h1>Gravar Áudio</h1>
-        <p class="subtitle">Captura o áudio compartilhado (sistema) + microfone, sem retorno.</p>
-      </header>
 
-      <section class="card">
+<head>
+  <meta charset="utf-8" />
+  <title>Gravar Áudio: Sistema + Microfone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <main class="container">
+    <header class="header">
+      <h1>EuGravoBot 🐧</h1>
+      <p class="subtitle">Grave reuniões de forma fácil e anônima direto do navegador!</p>
+      <p class="subtitle2">Este projeto é uma aplicação web simples que permite gravar o áudio do sistema (output) e o
+        microfone (input) ao mesmo tempo. Confira o <a href="https://github.com/parrelladev/EuGravoBot"
+          target="_blank">código fonte aqui!</a></p>
+    </header>
+
+    <section class="card">
+      <div class="controls">
         <div class="controls">
-          <button id="btnStart" class="btn primary">Compartilhar + Gravar</button>
+          <div class="start-wrapper">
+            <button id="btnStart" class="btn primary">Gravar</button>
+
+            <button id="recIndicator" class="btn btn--recording" disabled>
+              <span class="rec-dot" aria-hidden="true"></span>
+              <span class="rec-text">Gravando…</span>
+            </button>
+          </div>
+
           <button id="btnStop" class="btn" disabled>Parar &amp; Baixar</button>
         </div>
 
@@ -27,13 +41,15 @@
             <li>Para melhor estabilidade, compartilhe uma <strong>aba</strong> que esteja tocando som.</li>
           </ul>
         </div>
-      </section>
+    </section>
 
-      <footer class="footer">
-        <small>Funciona nos navegadores com <code>getDisplayMedia</code>, <code>getUserMedia</code>, WebAudio e <code>MediaRecorder</code>.</small>
-      </footer>
-    </main>
+    <footer class="footer">
+      <small>Funciona nos navegadores com <code>getDisplayMedia</code>, <code>getUserMedia</code>, WebAudio e
+        <code>MediaRecorder</code>.</small>
+    </footer>
+  </main>
 
-    <script type="module" src="./src/main.js"></script>
-  </body>
+  <script type="module" src="./src/main.js"></script>
+</body>
+
 </html>
